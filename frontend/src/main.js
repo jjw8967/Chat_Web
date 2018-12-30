@@ -3,7 +3,26 @@ import './plugins/vuetify'
 import App from './App.vue'
 import VueSocketIO from 'vue-socket.io'
 import VueSession from 'vue-session'
+import Vuex from 'vuex'
+
 Vue.use(VueSession)
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+  state: {
+    toUser: "all",
+  },
+  getters:{
+    getToUser: state => {
+      return state.toUser
+    }
+  },
+  mutations: {
+    modifyUser (state, user) {
+      state.toUser = user
+    }
+  }
+});
 
 Vue.use(new VueSocketIO({
     debug: true,
@@ -13,5 +32,6 @@ Vue.use(new VueSocketIO({
 Vue.config.productionTip = false
 
 new Vue({
+  store,
   render: h => h(App),
 }).$mount('#app')

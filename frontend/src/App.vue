@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <header-bar></header-bar>
-    <Login v-if="!$session.exists()"></Login>
-    <Chat v-if="$session.exists()"></Chat>
+    <Login v-if="!loginCheck"></Login>
+    <Chat v-if="loginCheck"></Chat>
     <Footer></Footer>
   </div>
 </template>
@@ -26,6 +26,11 @@ export default {
     Footer,
     Chat,
   },
+  computed:{
+    loginCheck: function(){
+      return this.$session.exists();
+    }
+  }
 }
 </script>
 

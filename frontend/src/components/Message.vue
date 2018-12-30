@@ -27,14 +27,14 @@
     },
     methods: {
       sendMessage() {
-
         this.$socket.emit('SEND_MESSAGE', {
-            user: this.userName,
+            fromUser: this.userName,
             message: this.message,
+            toUser: this.$store.getters.getToUser,
             date : new Date
         });
         this.message=''
       },
-    }
+    },
   }
 </script>
