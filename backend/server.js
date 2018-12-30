@@ -35,8 +35,9 @@ io.on('connection', function(socket) {
     socket.on('SEND_MESSAGE', (data) => {
         
         socket.emit('SENDED_MESSAGE',data)
-        if(data.toUser==='all'){
-            socket.broadcast.to('chat').emit('RECEIVE_MESSAGE',data)
+        if(data.toUser==data.fromUser) return;   //Message to yourself
+        if(data.toUser==='ALL'){
+            socket.broadcast.to('chat').emit('ALL_MESSAGE',data)
         }else{
             let toUser = users.find(user => user.user === data.toUser);
             io.to(toUser.socket_id).emit('RECEIVE_MESSAGE',data);

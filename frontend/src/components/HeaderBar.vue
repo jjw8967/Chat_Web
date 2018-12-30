@@ -9,12 +9,7 @@
 
         <v-toolbar-title>Chat</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>search</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>favorite</v-icon>
-        </v-btn>
+        
       </v-toolbar>
 
     <!-- Navigation-Drawer part -->
@@ -36,7 +31,7 @@
       </v-list>
 
       <v-list class="pt-0" dense>
-        
+      
         <v-divider></v-divider>
 
         <v-list-tile
@@ -44,6 +39,7 @@
           :key="person.user"
           @click="selectUser(person.user)"
         >
+
 
           <v-list-tile-action>
             <v-icon v-if="person.user!=toUser">person</v-icon>
@@ -55,8 +51,20 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        
-        <v-list-tile @click="logout()" v-if="this.$session.exists()">
+        <!-- send Message to All -->
+        <v-list-tile @click="selectUser('ALL')" v-if="$session.exists()">
+          <v-list-tile-action>
+            <v-icon v-if="'ALL'!=toUser">cloud</v-icon>
+            <v-icon v-if="'ALL'==toUser">done</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>ALL</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+
+
+        <!-- logout -->
+        <v-list-tile @click="logout()" v-if="$session.exists()">
           <v-list-tile-action>
             <v-icon>power_settings_new</v-icon>
           </v-list-tile-action>

@@ -45,7 +45,7 @@ import Message from './Message.vue'
     data:function(){
       return{
         messages: {
-
+          ALL:[]
         },
         temp:null,
         socket : this.$socket,
@@ -79,6 +79,12 @@ import Message from './Message.vue'
         this.messages=null;
         this.messages=this.temp;
       },
+      ALL_MESSAGE(data){
+        this.messages['ALL'] = [...this.messages['ALL'],data];
+        this.temp=this.messages;
+        this.messages=null;
+        this.messages=this.temp;
+      }
 
     },
     mounted(){
