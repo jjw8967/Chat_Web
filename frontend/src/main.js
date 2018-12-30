@@ -11,6 +11,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     toUser: "all",
+    
   },
   getters:{
     getToUser: state => {
@@ -20,7 +21,8 @@ const store = new Vuex.Store({
   mutations: {
     modifyUser (state, user) {
       state.toUser = user
-    }
+    },
+
   }
 });
 

@@ -54,6 +54,16 @@
             <v-list-tile-title>{{ person.user }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        
+        <v-list-tile @click="logout()" v-if="this.$session.exists()">
+          <v-list-tile-action>
+            <v-icon>power_settings_new</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>LOGOUT</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
 
@@ -80,6 +90,13 @@
       selectUser(user){
         this.$store.commit('modifyUser',user)
         this.toUser=this.$store.getters.getToUser;
+      },
+      logout(){
+        this.$session.destroy()
+        this.$socket.emit('DISCONNECT',{
+          user:this.userName,
+        })
+        window.location.reload()
       }
     },
   }
