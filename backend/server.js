@@ -38,10 +38,12 @@ io.on('connection', function(socket) {
         if(data.toUser==data.fromUser) return;   //Message to yourself
         if(data.toUser==='ALL'){
             socket.broadcast.to('chat').emit('ALL_MESSAGE',data)
+            socket.broadcast.to('chat').emit('COUNT_MESSAGE','ALL')     //count badge
         }else{
             let toUser = users.find(user => user.user === data.toUser);
             io.to(toUser.socket_id).emit('RECEIVE_MESSAGE',data);
-        }
+            io.to(toUser.socket_id).emit('COUNT_MESSAGE',data.fromUser);    //count badge
+        }   
     });
 
     socket.on('DISCONNECT', (data) => {

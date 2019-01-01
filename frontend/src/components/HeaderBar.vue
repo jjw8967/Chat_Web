@@ -39,23 +39,33 @@
           :key="person.user"
           @click="selectUser(person.user)"
         >
-
-
+          
           <v-list-tile-action>
-            <v-icon v-if="person.user!=toUser">person</v-icon>
-            <v-icon v-if="person.user==toUser">done</v-icon>
+            <v-badge
+            color="green">
+              <v-icon v-if="person.user!=toUser">person</v-icon>
+              <v-icon v-if="person.user==toUser">done</v-icon>
+            <span slot="badge">{{badges[person.user]}}</span>
+            </v-badge>
           </v-list-tile-action>
 
           <v-list-tile-content>
             <v-list-tile-title>{{ person.user }}</v-list-tile-title>
           </v-list-tile-content>
+          
+          
+       
         </v-list-tile>
 
         <!-- send Message to All -->
         <v-list-tile @click="selectUser('ALL')" v-if="$session.exists()">
           <v-list-tile-action>
-            <v-icon v-if="'ALL'!=toUser">cloud</v-icon>
-            <v-icon v-if="'ALL'==toUser">done</v-icon>
+            <v-badge
+            color="green">
+              <v-icon v-if="'ALL'!=toUser">cloud</v-icon>
+              <v-icon v-if="'ALL'==toUser">done</v-icon>
+              <span slot="badge">{{badges['ALL']}}</span>
+            </v-badge>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>ALL</v-list-tile-title>
@@ -73,6 +83,8 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
+
+      
     </v-navigation-drawer>
 
     </div>
@@ -84,20 +96,36 @@
       return {
         drawer: true,
         userName: this.$session.get('userName'),
-        toUser : "",
-        persons: []
+        toUser : this.$store.getters.getToUser,
+        badges: [],
+        persons: [],
+        temp: null,
       }
     },
     sockets:{
+      // Initialize User
       USERS(data){
         this.persons=data
+        for(let i in data)  this.badges[data[i].user]= 0;
+        this.badges['ALL'] = 0;
+
         
-      }
+      },
+      // Count unreaded messages
+      COUNT_MESSAGE(fromUser){
+        if(this.toUser==fromUser) return;
+        this.badges[fromUser] += 1;
+        this.temp = this.badges;
+        this.badges = null;
+        this.badges = this.temp;
+
+      },
     },
     methods:{
       selectUser(user){
         this.$store.commit('modifyUser',user)
         this.toUser=this.$store.getters.getToUser;
+        this.badges[this.toUser]=0;
       },
       logout(){
         this.$session.destroy()
