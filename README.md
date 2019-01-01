@@ -25,10 +25,11 @@ Connection: Upgrade
 Socket.IO는 실시간 웹 어플리케이션을 위한 자바스크립트 라이브러리이며, 웹 클라이언트와 서버간의 양방향 통신을 가능하게 한다.
 
 ### Installing
-~~~
+~~~shell
 npm install --save socket.io-client
 ~~~
-~~~
+
+~~~javascript
 
 const express = require('express');
 const app = express();
@@ -53,7 +54,7 @@ io.on('connection', (socket) => {
 
 또한 소켓들끼리 임의의 채널을 만들 수 있다.
 
-~~~
+~~~javascript
 io.on('connection', function(socket){
   socket.join('some room');
 });
@@ -63,17 +64,17 @@ io.on('connection', function(socket){
 
 해당 채널에 broadcasting이나 emit을 간다하게 사용할 수 있다.
 * Broadcasting
-~~~
+~~~javascript
 io.to('some room').emit('some event');
 ~~~
 * Leave
-~~~
+~~~javascript
 socket.leave('chat')
 ~~~
 
 ### Send message through socket id
 
-~~~
+~~~javascript
 io.to('Socket_id').emit('some event',data);
 ~~~
 
@@ -81,13 +82,13 @@ io.to('Socket_id').emit('some event',data);
 Vue-Socket.io is a socket.io integration for Vuejs, easy to use, supporting Vuex and component level socket consumer managements
 
 ### Installing
-~~~
+~~~shell
 npm install vue-socket.io --save
 ~~~
 
 
 * main.js
-~~~
+~~~javascript
 import Vue from 'vue'
 import VueSocketIO from 'vue-socket.io'
  
