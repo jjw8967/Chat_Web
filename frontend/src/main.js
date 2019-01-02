@@ -4,7 +4,9 @@ import App from './App.vue'
 import VueSocketIO from 'vue-socket.io'
 import VueSession from 'vue-session'
 import Vuex from 'vuex'
+import vuescroll from 'vue-scroll'
 
+Vue.use(vuescroll)
 Vue.use(VueSession)
 Vue.use(Vuex);
 

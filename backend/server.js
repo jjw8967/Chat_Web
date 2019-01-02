@@ -18,7 +18,7 @@ const io = require('socket.io')(server);
 
 io.on('connection', function(socket) {
     
-  
+    
     //CHAT PART
     socket.on('CONNECT',(data)=>{
         
@@ -34,7 +34,9 @@ io.on('connection', function(socket) {
         
     })
     socket.on('SEND_MESSAGE', (data) => {
-        
+
+        io.sockets.emit('MESSAGE');
+    
         socket.emit('SENDED_MESSAGE',data)
         if(data.toUser==data.fromUser) return;   //Message to yourself
         if(data.toUser==='ALL'){
@@ -52,6 +54,8 @@ io.on('connection', function(socket) {
     });
 
     socket.on('DISCONNECT', (data) => {
+        io.sockets.emit('MESSAGE');
+    
         for(let i =0;i<users.length;i++){
             if(users[i].user==data.user){
                 users.splice(i,1);

@@ -1,10 +1,26 @@
 <template>
   <div class="mt-3" >
+    
+   
       <v-layout row wrap justify-center>
           <v-card id="chatBox" height="500" width="800">
               <h2>{{$store.getters.getToUser}}</h2>
+              
+
+              <!-- Scroll handling -->
+              <v-container
+                id="scroll-target"
+                style="max-height: 400px"
+                class="scroll-y"
+                overflow: auto
+              >
+              <v-layout
+              v-scroll
+              column
+              align-center
+              justify-center
+              ></v-layout>
               <v-list>
-  
 
               <div v-for="message in messages[$store.getters.getToUser]" 
               v-bind:key="message.date">
@@ -24,13 +40,15 @@
                 <v-divider inset></v-divider>
         
               </div>
-              
-       
-             </v-list>
+              </v-list>
+              </v-container>
+             
           </v-card>
           
       </v-layout>
+
       <Message></Message>
+
       
   
       
@@ -50,7 +68,7 @@ import Message from './Message.vue'
         temp:null,
         socket : this.$socket,
         userName: this.$session.get('userName'),
-
+        container: null,
       }
     },
     components:{
@@ -59,10 +77,14 @@ import Message from './Message.vue'
     },
     sockets:{
       USERS(data){
-
+        
         for(let i in data){
           this.messages[data[i].user]=[];
         }
+      },
+      //All Message event handle
+      MESSAGE(){
+        this.container.scrollTop+=100
       },
       RECEIVE_MESSAGE(data){
         
@@ -70,7 +92,7 @@ import Message from './Message.vue'
         this.temp=this.messages;
         this.messages=null;
         this.messages=this.temp;
-
+        
       },
       SENDED_MESSAGE(data){
       
@@ -104,6 +126,11 @@ import Message from './Message.vue'
           user:this.userName
         })
       }
+
+      //scroll handle
+      this.container = document.getElementById ( "scroll-target" )
+      
+     
       
     },
     

@@ -3,6 +3,7 @@
         <v-card width="800">
             <v-text-field
                 height='70'
+                maxlength="75"
                 v-model="message"
                 :append-icon="'send'"
                 box
@@ -10,7 +11,7 @@
                 clearable
                 type="text"
                 @click:append="sendMessage"
-                @keyup.enter="sendMessage()"
+                @keyup.enter="sendMessage"
                 @click:clear="message=''"
             ></v-text-field>
         </v-card>
@@ -28,6 +29,7 @@
     },
     methods: {
       sendMessage() {
+        if(this.message==='') return;
         this.$socket.emit('SEND_MESSAGE', {
             fromUser: this.userName,
             message: this.message,
@@ -37,5 +39,6 @@
         this.message=''
       },
     },
+    
   }
 </script>
