@@ -6,10 +6,11 @@
             <v-card-title primary-title>
               <h2>Login</h2>
             </v-card-title>
-            <v-form>
-              <v-text-field prepend-icon="person" v-model="userName" label="Username"></v-text-field>
+            <v-form @submit="login()">
+              <v-text-field prepend-icon="person" autofocus v-model="userName" label="Username"></v-text-field>
+           
               <v-card-actions>
-                <v-btn primary large block @click="login()">Login</v-btn>
+                <v-btn primary large block @click="login()" >Login</v-btn>
               </v-card-actions>
             </v-form>
           </v-card>
@@ -31,6 +32,14 @@ export default{
             this.$session.set('userName',this.userName);
             window.location.reload()   
         }
+    },
+    directives: {
+      focus: {
+        // 디렉티브 정의
+        inserted: function (el) {
+          el.focus()
+        }
+      }
     }
 }
 </script>
