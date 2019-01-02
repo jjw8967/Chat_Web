@@ -82,6 +82,15 @@
             <v-list-tile-title>LOGOUT</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile @click="drawer=!drawer">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>CLOSE</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
 
       
@@ -94,7 +103,7 @@
   export default {
     data () {
       return {
-        drawer: true,
+        drawer: false,
         userName: this.$session.get('userName'),
         toUser : this.$store.getters.getToUser,
         badges: [],
