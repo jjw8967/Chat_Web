@@ -41,9 +41,13 @@ io.on('connection', function(socket) {
             socket.broadcast.to('chat').emit('ALL_MESSAGE',data)
             socket.broadcast.to('chat').emit('COUNT_MESSAGE','ALL')     //count badge
         }else{
+            
             let toUser = users.find(user => user.user === data.toUser);
-            io.to(toUser.socket_id).emit('RECEIVE_MESSAGE',data);
-            io.to(toUser.socket_id).emit('COUNT_MESSAGE',data.fromUser);    //count badge
+            if(toUser===undefined) socket.emit('NOT_FOUND_USER',data);
+            else{
+                io.to(toUser.socket_id).emit('RECEIVE_MESSAGE',data)
+                io.to(toUser.socket_id).emit('COUNT_MESSAGE',data.fromUser);    //count badge
+            }
         }   
     });
 

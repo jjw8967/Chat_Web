@@ -120,6 +120,7 @@
         this.badges = this.temp;
 
       },
+      
     },
     methods:{
       selectUser(user){

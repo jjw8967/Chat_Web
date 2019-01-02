@@ -11,12 +11,12 @@
                 <v-list-tile>
                   
                   <v-list-tile-action>  
-                    <span v-if="userName===message.fromUser">me</span>
+                    <span v-if="userName===message.fromUser && !message.disconnect">me</span>
                     <span v-if="userName!==message.fromUser">{{message.fromUser}}</span>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>{{message.message}}</v-list-tile-title>
-                    
+                    <span v-if="!message.disconnect">{{message.message}}</span>
+                    <span v-if="message.disconnect">{{message.toUser}}님이 방을 나가셨습니다. </span>
                   </v-list-tile-content>
                   
                   
@@ -81,6 +81,13 @@ import Message from './Message.vue'
       },
       ALL_MESSAGE(data){
         this.messages['ALL'] = [...this.messages['ALL'],data];
+        this.temp=this.messages;
+        this.messages=null;
+        this.messages=this.temp;
+      },
+      NOT_FOUND_USER(data){
+        data['disconnect'] = true;
+        this.messages[data.toUser] = [...this.messages[data.toUser],data];
         this.temp=this.messages;
         this.messages=null;
         this.messages=this.temp;

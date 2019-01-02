@@ -10,6 +10,7 @@
                 clearable
                 type="text"
                 @click:append="sendMessage"
+                @keyup.enter="sendMessage()"
                 @click:clear="message=''"
             ></v-text-field>
         </v-card>
