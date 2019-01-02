@@ -7,7 +7,9 @@
               <h2>Login</h2>
             </v-card-title>
             <v-form @submit="login()">
-              <v-text-field prepend-icon="person" autofocus v-model="userName" label="Username"></v-text-field>
+              <v-text-field 
+              maxlength="15"
+              prepend-icon="person" autofocus v-model="userName" label="Username"></v-text-field>
            
               <v-card-actions>
                 <v-btn primary large block @click="login()" >Login</v-btn>
