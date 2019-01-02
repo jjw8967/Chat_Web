@@ -84,7 +84,9 @@ import Message from './Message.vue'
       },
       //All Message event handle
       MESSAGE(){
-        this.container.scrollTop+=100
+        setTimeout(() => { this.container.scrollTop+=100
+        },1);
+        
       },
       RECEIVE_MESSAGE(data){
         
