@@ -1,16 +1,9 @@
-
-//const ws = require('./ws')
-
-const WebSocketServer = require('ws').Server,
-
-wss = new WebSocketServer({port: 40510})
-
-wss.on('connection', function (ws) {
-  console.log('connect')
-  ws.on('message', function (message) {
-    console.log(message.a)
-    console.log('received: %s', message)
-    ws.send('hi');
-  })
-  
+var express = require('express')
+var ws = require('./ws')
+var app = express()
+app.get('/', function (req, res) {
+   res.sendfile(__dirname + '/index.html');
+})
+app.listen(3000, function () {
+   console.log('Example app listening on port 3000!')
 })

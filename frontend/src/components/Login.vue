@@ -30,6 +30,11 @@ export default{
     },
     methods:{
         login(){
+            if(this.userName == "ALL"){
+              alert("You can't use the name ALL.")
+              this.userName =""
+              return;
+            }
             this.$session.start()
             this.$session.set('userName',this.userName);
             window.location.reload()   

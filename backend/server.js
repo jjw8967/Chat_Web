@@ -63,6 +63,7 @@ wss.on('connection', function (ws) {
             
             users=[...users,{'user':data.user,'ws':ws}];
             data['connect']=true;
+            
             toBroadcast(ws,'CONNECTED',data)
             inBroadcast('USERS',users)
             
@@ -79,16 +80,18 @@ wss.on('connection', function (ws) {
             if(data.toUser==='ALL'){
                 
                 toBroadcast(ws,'ALL_MESSAGE',data)
-                toBroadcast(ws,'COUNT_MESSAGE',{fromUser:data.fromUser});     //count badge
+                toBroadcast(ws,'COUNT_MESSAGE',{fromUser:"ALL"});     //count badge
             }else{
                 let toUser = users.find(user => user.user === data.toUser);
                 if(toUser===undefined){
                     send(ws,'NOT_FOUND_USER',data)
-                    
                 }
+                
                 else{
                     send(toUser.ws,'RECEIVE_MESSAGE',data)
+                    
                     send(toUser.ws,'COUNT_MESSAGE',{"fromUser":data.fromUser})    //count badge
+                    
                 }
             }  
 

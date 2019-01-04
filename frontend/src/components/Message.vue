@@ -31,12 +31,13 @@
       sendMessage() {
         if(this.message==='') return;
         this.$socket.send(JSON.stringify({
-            direct : 'SEND_MESSAGE', 
+          direct : 'SEND_MESSAGE', 
             fromUser: this.userName,
             message: this.message,
             toUser: this.$store.getters.getToUser,
             date : new Date
         }));
+        
         this.message=''
       },
     },
