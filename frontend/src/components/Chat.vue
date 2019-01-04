@@ -75,63 +75,67 @@ import Message from './Message.vue'
         Message,
   
     },
-    sockets:{
-      USERS(data){
-        
-        for(let i in data){
-          this.messages[data[i].user]=[];
-        }
-      },
-      //All Message event handle
-      MESSAGE(){
-        setTimeout(() => { this.container.scrollTop+=100
-        },1);
-        
-      },
-      RECEIVE_MESSAGE(data){
-        
-        this.messages[data.fromUser] = [...this.messages[data.fromUser],data];
-        this.temp=this.messages;
-        this.messages=null;
-        this.messages=this.temp;
-        
-      },
-      SENDED_MESSAGE(data){
-      
-        this.messages[data.toUser] = [...this.messages[data.toUser],data];
-        this.temp=this.messages;
-        this.messages=null;
-        this.messages=this.temp;
-      },
-      ALL_MESSAGE(data){
-        this.messages['ALL'] = [...this.messages['ALL'],data];
-        this.temp=this.messages;
-        this.messages=null;
-        this.messages=this.temp;
-      },
-      NOT_FOUND_USER(data){
-        data['disconnect'] = true;
-        this.messages[data.toUser] = [...this.messages[data.toUser],data];
-        this.temp=this.messages;
-        this.messages=null;
-        this.messages=this.temp;
-      }
-
-    },
     mounted(){
-      this.socket.emit('CONNECT',{
-        user:this.userName
-      });
+      this.socket.onopen = () =>{
+        this.socket.send(JSON.stringify({
+          direct : 'CONNECT',
+          user:this.userName
+        }));
+      }
       
       window.onbeforeunload=()=>{
-        this.socket.emit('DISCONNECT',{
-          user:this.userName
-        })
+        this.socket.onopen = () =>{
+          this.socket.send(JSON.stringify({
+            direct : 'DISCONNECT',
+            user:this.userName
+          }))
+        }
       }
 
       //scroll handle
       this.container = document.getElementById ( "scroll-target" )
-      
+      this.$options.sockets.onmessage = (data) =>{
+        data = JSON.parse(data.data)
+        switch(data.direct){
+          case 'USERS':
+            for(let i in data){
+              this.messages[data[i].user]=[];
+            }
+            break;
+          case 'MESSAGE':
+            setTimeout(() => { this.container.scrollTop+=100
+            },1);
+            break;
+          case 'RECEIVE_MESSAGE':
+            this.messages[data.fromUser] = [...this.messages[data.fromUser],data];
+            this.temp=this.messages;
+            this.messages=null;
+            this.messages=this.temp;
+            break;
+          case 'SENDED_MESSAGE' :
+            this.messages[data.toUser] = [...this.messages[data.toUser],data];
+            this.temp=this.messages;
+            this.messages=null;
+            this.messages=this.temp;
+            break;
+
+          case 'ALL_MESSAGE':
+            this.messages['ALL'] = [...this.messages['ALL'],data];
+            console.log(data)
+            this.temp=this.messages;
+            this.messages=null;
+            this.messages=this.temp;
+            break;
+
+          case 'NOT_FOUND_USER':
+            data['disconnect'] = true;
+            this.messages[data.toUser] = [...this.messages[data.toUser],data];
+            this.temp=this.messages;
+            this.messages=null;
+            this.messages=this.temp;
+            break;
+        }
+      }
      
       
     },

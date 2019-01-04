@@ -1,70 +1,115 @@
 const express = require('express');
 const app = express();
 
+var clients = [];
+var users=[];
+
 /*
 uesrs={ 
     user : name of user, 
     socket_id : socket ID about the User
 }
 */
- 
-var users=[];
 
-const server = app.listen(8000, function() {
-    console.log('server running on port 8000');
-});
+const WebSocketServer = require('ws').Server,
 
-const io = require('socket.io')(server);
+wss = new WebSocketServer({port: 40510})
 
-io.on('connection', function(socket) {
+// except myself
+function toBroadcast(sender,direct,data){
     
-    
-    //CHAT PART
-    socket.on('CONNECT',(data)=>{
+    for(let i =0 ; i<users.length ; i++){
         
-        for(let i =0;i<users.length;i++){
-            if(users[i].user==data.user)
-                return;
-        }
-        users=[...users,{'user':data.user,'socket_id':socket.id}];
-        socket.join('chat');
-        data['connect']=true;
-        socket.broadcast.to('chat').emit('CONNECTED',data)
-        io.sockets.in('chat').emit('USERS',users);
-        
-    })
-    socket.on('SEND_MESSAGE', (data) => {
-
-        io.sockets.emit('MESSAGE');
-    
-        socket.emit('SENDED_MESSAGE',data)
-        if(data.toUser==data.fromUser) return;   //Message to yourself
-        if(data.toUser==='ALL'){
-            socket.broadcast.to('chat').emit('ALL_MESSAGE',data)
-            socket.broadcast.to('chat').emit('COUNT_MESSAGE','ALL')     //count badge
-        }else{
+        if(sender !== users[i].ws)
             
-            let toUser = users.find(user => user.user === data.toUser);
-            if(toUser===undefined) socket.emit('NOT_FOUND_USER',data);
-            else{
-                io.to(toUser.socket_id).emit('RECEIVE_MESSAGE',data)
-                io.to(toUser.socket_id).emit('COUNT_MESSAGE',data.fromUser);    //count badge
-            }
-        }   
-    });
+            send(users[i].ws,direct,data)
+    }
+}
+function inBroadcast(direct,data){
+    for(let i in users){
+        
+        send(users[i].ws,direct,data);
+    }
+}
 
-    socket.on('DISCONNECT', (data) => {
-        io.sockets.emit('MESSAGE');
+function send(sender,direct,data){
+    let message = {};
+    if(direct === 'USERS'){
+        message['direct'] = direct;
+        message['users'] = users;
+    }else {
+        message= data;
+        message['direct'] = direct;
+    }
+
+    sender.send(JSON.stringify(message))
     
-        for(let i =0;i<users.length;i++){
-            if(users[i].user==data.user){
-                users.splice(i,1);
-                break;
-            }
-        }
-        socket.broadcast.to('chat').emit('DISCONNECT',data)
-        io.sockets.in('chat').emit('USERS',users);
-        socket.leave('chat')
-    });
+    
+}
 
-});
+wss.on('connection', function (ws) {
+    
+  ws.on('message', function (data) {
+    
+    data = JSON.parse(data);
+
+    switch(data.direct){
+        case 'CONNECT' : 
+
+            // for(let i =0;i<users.length;i++){
+            //     if(users[i].user==data.user)
+            //         return;
+            // }
+            
+            users=[...users,{'user':data.user,'ws':ws}];
+            data['connect']=true;
+            toBroadcast(ws,'CONNECTED',data)
+            inBroadcast('USERS',users)
+            
+            
+            break;
+
+        case 'SEND_MESSAGE' :
+            
+            send(ws,'MESSAGE',{})
+            
+            send(ws,'SENDED_MESSAGE',data)
+            
+            if(data.toUser==data.fromUser) return;   //Message to yourself
+            if(data.toUser==='ALL'){
+                
+                toBroadcast(ws,'ALL_MESSAGE',data)
+                toBroadcast(ws,'COUNT_MESSAGE',{fromUser:data.fromUser});     //count badge
+            }else{
+                let toUser = users.find(user => user.user === data.toUser);
+                if(toUser===undefined){
+                    send(ws,'NOT_FOUND_USER',data)
+                    
+                }
+                else{
+                    send(toUser.ws,'RECEIVE_MESSAGE',data)
+                    send(toUser.ws,'COUNT_MESSAGE',{"fromUser":data.fromUser})    //count badge
+                }
+            }  
+
+            break;
+
+        case 'DISCONNECT' :
+            send(ws,'MESSAGE',{})
+            
+            for(let i =0;i<users.length;i++){
+                if(users[i].user==data.user){
+                    users.splice(i,1);
+                    break;
+                }
+            }
+            toBroadcast(ws,'DISCONNECT',data)
+            inBroadcast('USERS',users)
+            
+            break;
+        }
+  })
+})
+    
+    
+  

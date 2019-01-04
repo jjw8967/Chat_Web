@@ -111,39 +111,46 @@
         temp: null,
       }
     },
-    sockets:{
-      // Initialize User
-      USERS(data){
-        this.persons=data
-        for(let i in data)  this.badges[data[i].user]= 0;
-        this.badges['ALL'] = 0;
-
-        
-      },
-      // Count unreaded messages
-      COUNT_MESSAGE(fromUser){
-        if(this.toUser==fromUser) return;
-        this.badges[fromUser] += 1;
-        this.temp = this.badges;
-        this.badges = null;
-        this.badges = this.temp;
-
-      },
-      
-    },
     methods:{
-      selectUser(user){
+      selectUser(user){JSON.stringify
         this.$store.commit('modifyUser',user)
         this.toUser=this.$store.getters.getToUser;
         this.badges[this.toUser]=0;
       },
       logout(){
         this.$session.destroy()
-        this.$socket.emit('DISCONNECT',{
+        this.$socket.send(JSON.stringify({
+          direct: 'DISCONNECT',
           user:this.userName,
-        })
+        }))
         window.location.reload()
       }
     },
+    mounted(){
+      this.$options.sockets.onmessage = (data) =>{
+        
+        data = JSON.parse(data.data);
+        
+        switch(data.direct){
+          case 'USERS' : 
+            
+            this.persons=data.users
+            
+            for(let i in data.users)  this.badges[data.users[i].user]= 0;
+            this.badges['ALL'] = 0;
+          
+            break;
+        
+          case 'COUNT_MESSAGE' :
+            console.log(data)
+            if(this.toUser==data.fromUser) return;
+            this.badges[data.fromUser] += 1;
+            this.temp = this.badges;
+            this.badges = null;
+            this.badges = this.temp;
+            break; 
+        }
+    }
   }
+}
 </script>
