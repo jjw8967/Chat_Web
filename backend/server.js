@@ -1,8 +1,11 @@
-const express = require('express');
-const app = express();
+const http = require('http')
+const app = require('./app')
 
-var clients = [];
-var users=[];
+const PORT = 8000;
+
+http.createServer(app).listen(PORT, () => {
+    console.info(`Backend Server is running on ${PORT}..`)
+})
 
 /*
 uesrs={ 
@@ -10,6 +13,8 @@ uesrs={
     socket_id : socket ID about the User
 }
 */
+
+var users=[];
 
 const WebSocketServer = require('ws').Server,
 

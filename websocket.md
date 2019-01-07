@@ -19,7 +19,8 @@ GET /chat HTTP/1.1
 Host: server.example.com
 Upgrade: websocket
 Connection: Upgrade
-Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9G
+BhXDw==
 Sec-WebSocket-Protocol: chat, superchat
 Sec-WebSocket-Version: 13
 Origin: http://example.com

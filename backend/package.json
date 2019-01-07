@@ -12,6 +12,9 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "socket.io": "^2.2.0",
-    "websocket": "^1.0.28"
+    "websocket": "^1.0.28",
+    "mongoose": "^5.3.12",
+    "mongoose-auto-increment": "^5.0.1",
+    "body-parser": "^1.18.3"
   }
 }
